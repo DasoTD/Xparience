@@ -30,5 +30,8 @@ Thumbs.db
 
 *.http
 *.yml
+!.github/
+!.github/workflows/
+!.github/workflows/*.yml
 
 *.ps1
