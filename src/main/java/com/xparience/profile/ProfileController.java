@@ -74,8 +74,15 @@ public class ProfileController {
         return ResponseEntity.ok(ApiResponse.success(profileService.savePersonalityQuiz(request)));
     }
 
+    @PostMapping("/review-submit")
+    @Operation(summary = "Step 8 — Review and submit profile")
+    public ResponseEntity<ApiResponse<String>> reviewAndSubmit(
+            @Valid @RequestBody ReviewSubmitRequest request) {
+        return ResponseEntity.ok(ApiResponse.success(profileService.reviewAndSubmit(request)));
+    }
+
     @GetMapping("/completion-status")
-    @Operation(summary = "Get profile completion status (Welcome Back screen)")
+    @Operation(summary = "Get profile completion status and exact resume step")
     public ResponseEntity<ApiResponse<ProfileCompletionResponse>> getCompletionStatus() {
         return ResponseEntity.ok(ApiResponse.success("Profile completion status",
                 profileService.getCompletionStatus()));

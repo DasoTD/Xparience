@@ -2,8 +2,11 @@ package com.xparience.config;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.xparience.otp.SmsSenderProperties;
+import com.xparience.subscription.StripeProperties;
 import com.xparience.user.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
+@EnableConfigurationProperties({SmsSenderProperties.class, StripeProperties.class})
 public class ApplicationConfig {
 
     private final UserRepository userRepository;

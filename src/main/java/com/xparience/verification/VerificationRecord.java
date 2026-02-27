@@ -3,6 +3,7 @@ package com.xparience.verification;
 import com.xparience.user.User;
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -23,6 +24,11 @@ public class VerificationRecord {
 
     private String idNumber;
     private String idDocumentUrl;
+    private LocalDate idExpiryDate;
+    private boolean idQualityPassed;
+    private boolean duplicateIdDetected;
+    private boolean livenessPassed;
+    private Integer selfieAttempts = 0;
 
     // Face verification
     private String selfieImageUrl;
@@ -83,6 +89,16 @@ public class VerificationRecord {
     public void setIdNumber(String idNumber) { this.idNumber = idNumber; }
     public String getIdDocumentUrl() { return idDocumentUrl; }
     public void setIdDocumentUrl(String idDocumentUrl) { this.idDocumentUrl = idDocumentUrl; }
+    public LocalDate getIdExpiryDate() { return idExpiryDate; }
+    public void setIdExpiryDate(LocalDate idExpiryDate) { this.idExpiryDate = idExpiryDate; }
+    public boolean isIdQualityPassed() { return idQualityPassed; }
+    public void setIdQualityPassed(boolean idQualityPassed) { this.idQualityPassed = idQualityPassed; }
+    public boolean isDuplicateIdDetected() { return duplicateIdDetected; }
+    public void setDuplicateIdDetected(boolean duplicateIdDetected) { this.duplicateIdDetected = duplicateIdDetected; }
+    public boolean isLivenessPassed() { return livenessPassed; }
+    public void setLivenessPassed(boolean livenessPassed) { this.livenessPassed = livenessPassed; }
+    public Integer getSelfieAttempts() { return selfieAttempts; }
+    public void setSelfieAttempts(Integer selfieAttempts) { this.selfieAttempts = selfieAttempts; }
     public String getSelfieImageUrl() { return selfieImageUrl; }
     public void setSelfieImageUrl(String selfieImageUrl) { this.selfieImageUrl = selfieImageUrl; }
     public boolean isFaceMatchPassed() { return faceMatchPassed; }

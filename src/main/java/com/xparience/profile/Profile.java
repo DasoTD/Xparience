@@ -26,6 +26,10 @@ public class Profile {
     private String relationshipGoal;
     private String reasonForJoining;
     private String city;
+    private Double latitude;
+    private Double longitude;
+    private Integer matchRadiusKm;
+    private String timezone;
     private String profilePictureUrl;
 
     @Column(columnDefinition = "TEXT")
@@ -34,17 +38,29 @@ public class Profile {
     @Column(columnDefinition = "TEXT")
     private String values;
 
-    @Transient
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "profile_additional_images", joinColumns = @JoinColumn(name = "profile_id"))
+    @Column(name = "image_url")
     private List<String> additionalImageUrls;
 
-    @Transient
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "profile_preferences", joinColumns = @JoinColumn(name = "profile_id"))
+    @Column(name = "preference")
     private List<String> preferences;
+
+    private String profilePictureThumbnailUrl;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "profile_additional_image_thumbnails", joinColumns = @JoinColumn(name = "profile_id"))
+    @Column(name = "thumbnail_url")
+    private List<String> additionalImageThumbnailUrls;
 
     private String nonNegotiable1;
     private String nonNegotiable2;
     private String nonNegotiable3;
 
     private String dietStyle;
+    private String cookingFrequency;
     private String healthGoals;
     private String allergiesOrRestrictions;
 
@@ -54,6 +70,11 @@ public class Profile {
     private String surprisingPassion;
     private String emotionalIntelligence;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "profile_personality_answers", joinColumns = @JoinColumn(name = "profile_id"))
+    @Column(name = "answer", length = 500)
+    private List<String> personalityQuizAnswers;
+
     private boolean basicInfoComplete = false;
     private boolean imagesComplete = false;
     private boolean aboutYouComplete = false;
@@ -61,6 +82,7 @@ public class Profile {
     private boolean nonNegotiablesComplete = false;
     private boolean nutritionVibeComplete = false;
     private boolean personalityQuizComplete = false;
+    private boolean reviewSubmitted = false;
     private boolean identityVerified = false;
 
     private LocalDateTime createdAt;
@@ -85,6 +107,10 @@ public class Profile {
     public String getRelationshipGoal() { return relationshipGoal; }
     public String getReasonForJoining() { return reasonForJoining; }
     public String getCity() { return city; }
+    public Double getLatitude() { return latitude; }
+    public Double getLongitude() { return longitude; }
+    public Integer getMatchRadiusKm() { return matchRadiusKm; }
+    public String getTimezone() { return timezone; }
     public String getProfilePictureUrl() { return profilePictureUrl; }
     public String getBio() { return bio; }
     public String getValues() { return values; }
@@ -94,6 +120,7 @@ public class Profile {
     public String getNonNegotiable2() { return nonNegotiable2; }
     public String getNonNegotiable3() { return nonNegotiable3; }
     public String getDietStyle() { return dietStyle; }
+    public String getCookingFrequency() { return cookingFrequency; }
     public String getHealthGoals() { return healthGoals; }
     public String getAllergiesOrRestrictions() { return allergiesOrRestrictions; }
     public String getIdealWeekendActivity() { return idealWeekendActivity; }
@@ -101,6 +128,9 @@ public class Profile {
     public String getThreeWordsFromFriend() { return threeWordsFromFriend; }
     public String getSurprisingPassion() { return surprisingPassion; }
     public String getEmotionalIntelligence() { return emotionalIntelligence; }
+    public List<String> getPersonalityQuizAnswers() { return personalityQuizAnswers; }
+    public String getProfilePictureThumbnailUrl() { return profilePictureThumbnailUrl; }
+    public List<String> getAdditionalImageThumbnailUrls() { return additionalImageThumbnailUrls; }
     public boolean isBasicInfoComplete() { return basicInfoComplete; }
     public boolean isImagesComplete() { return imagesComplete; }
     public boolean isAboutYouComplete() { return aboutYouComplete; }
@@ -108,6 +138,7 @@ public class Profile {
     public boolean isNonNegotiablesComplete() { return nonNegotiablesComplete; }
     public boolean isNutritionVibeComplete() { return nutritionVibeComplete; }
     public boolean isPersonalityQuizComplete() { return personalityQuizComplete; }
+    public boolean isReviewSubmitted() { return reviewSubmitted; }
     public boolean isIdentityVerified() { return identityVerified; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
@@ -122,6 +153,10 @@ public class Profile {
     public void setRelationshipGoal(String relationshipGoal) { this.relationshipGoal = relationshipGoal; }
     public void setReasonForJoining(String reasonForJoining) { this.reasonForJoining = reasonForJoining; }
     public void setCity(String city) { this.city = city; }
+    public void setLatitude(Double latitude) { this.latitude = latitude; }
+    public void setLongitude(Double longitude) { this.longitude = longitude; }
+    public void setMatchRadiusKm(Integer matchRadiusKm) { this.matchRadiusKm = matchRadiusKm; }
+    public void setTimezone(String timezone) { this.timezone = timezone; }
     public void setProfilePictureUrl(String profilePictureUrl) { this.profilePictureUrl = profilePictureUrl; }
     public void setBio(String bio) { this.bio = bio; }
     public void setValues(String values) { this.values = values; }
@@ -131,6 +166,7 @@ public class Profile {
     public void setNonNegotiable2(String nonNegotiable2) { this.nonNegotiable2 = nonNegotiable2; }
     public void setNonNegotiable3(String nonNegotiable3) { this.nonNegotiable3 = nonNegotiable3; }
     public void setDietStyle(String dietStyle) { this.dietStyle = dietStyle; }
+    public void setCookingFrequency(String cookingFrequency) { this.cookingFrequency = cookingFrequency; }
     public void setHealthGoals(String healthGoals) { this.healthGoals = healthGoals; }
     public void setAllergiesOrRestrictions(String allergiesOrRestrictions) { this.allergiesOrRestrictions = allergiesOrRestrictions; }
     public void setIdealWeekendActivity(String idealWeekendActivity) { this.idealWeekendActivity = idealWeekendActivity; }
@@ -138,6 +174,9 @@ public class Profile {
     public void setThreeWordsFromFriend(String threeWordsFromFriend) { this.threeWordsFromFriend = threeWordsFromFriend; }
     public void setSurprisingPassion(String surprisingPassion) { this.surprisingPassion = surprisingPassion; }
     public void setEmotionalIntelligence(String emotionalIntelligence) { this.emotionalIntelligence = emotionalIntelligence; }
+    public void setPersonalityQuizAnswers(List<String> personalityQuizAnswers) { this.personalityQuizAnswers = personalityQuizAnswers; }
+    public void setProfilePictureThumbnailUrl(String profilePictureThumbnailUrl) { this.profilePictureThumbnailUrl = profilePictureThumbnailUrl; }
+    public void setAdditionalImageThumbnailUrls(List<String> additionalImageThumbnailUrls) { this.additionalImageThumbnailUrls = additionalImageThumbnailUrls; }
     public void setBasicInfoComplete(boolean basicInfoComplete) { this.basicInfoComplete = basicInfoComplete; }
     public void setImagesComplete(boolean imagesComplete) { this.imagesComplete = imagesComplete; }
     public void setAboutYouComplete(boolean aboutYouComplete) { this.aboutYouComplete = aboutYouComplete; }
@@ -145,5 +184,6 @@ public class Profile {
     public void setNonNegotiablesComplete(boolean nonNegotiablesComplete) { this.nonNegotiablesComplete = nonNegotiablesComplete; }
     public void setNutritionVibeComplete(boolean nutritionVibeComplete) { this.nutritionVibeComplete = nutritionVibeComplete; }
     public void setPersonalityQuizComplete(boolean personalityQuizComplete) { this.personalityQuizComplete = personalityQuizComplete; }
+    public void setReviewSubmitted(boolean reviewSubmitted) { this.reviewSubmitted = reviewSubmitted; }
     public void setIdentityVerified(boolean identityVerified) { this.identityVerified = identityVerified; }
 }

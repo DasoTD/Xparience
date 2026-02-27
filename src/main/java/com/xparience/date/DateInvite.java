@@ -30,8 +30,22 @@ public class DateInvite {
     private String title;
     private String description;
     private String contentLink;
+    private String streamingContentId;
 
     private LocalDateTime scheduledAt;
+    private LocalDateTime dateStartedAt;
+    private LocalDateTime dateEndedAt;
+
+    private String webrtcRoomId;
+    private String webrtcJoinToken;
+    private LocalDateTime roomCreatedAt;
+
+    private boolean screenshotBlockingRequired = true;
+    private int rescheduleCount = 0;
+
+    private String lastSyncAction;
+    private Long lastSyncPositionSeconds;
+    private LocalDateTime lastSyncAt;
 
     @Enumerated(EnumType.STRING)
     private DateStatus status = DateStatus.PENDING;
@@ -89,8 +103,30 @@ public class DateInvite {
     public void setDescription(String description) { this.description = description; }
     public String getContentLink() { return contentLink; }
     public void setContentLink(String contentLink) { this.contentLink = contentLink; }
+    public String getStreamingContentId() { return streamingContentId; }
+    public void setStreamingContentId(String streamingContentId) { this.streamingContentId = streamingContentId; }
     public LocalDateTime getScheduledAt() { return scheduledAt; }
     public void setScheduledAt(LocalDateTime scheduledAt) { this.scheduledAt = scheduledAt; }
+    public LocalDateTime getDateStartedAt() { return dateStartedAt; }
+    public void setDateStartedAt(LocalDateTime dateStartedAt) { this.dateStartedAt = dateStartedAt; }
+    public LocalDateTime getDateEndedAt() { return dateEndedAt; }
+    public void setDateEndedAt(LocalDateTime dateEndedAt) { this.dateEndedAt = dateEndedAt; }
+    public String getWebrtcRoomId() { return webrtcRoomId; }
+    public void setWebrtcRoomId(String webrtcRoomId) { this.webrtcRoomId = webrtcRoomId; }
+    public String getWebrtcJoinToken() { return webrtcJoinToken; }
+    public void setWebrtcJoinToken(String webrtcJoinToken) { this.webrtcJoinToken = webrtcJoinToken; }
+    public LocalDateTime getRoomCreatedAt() { return roomCreatedAt; }
+    public void setRoomCreatedAt(LocalDateTime roomCreatedAt) { this.roomCreatedAt = roomCreatedAt; }
+    public boolean isScreenshotBlockingRequired() { return screenshotBlockingRequired; }
+    public void setScreenshotBlockingRequired(boolean screenshotBlockingRequired) { this.screenshotBlockingRequired = screenshotBlockingRequired; }
+    public int getRescheduleCount() { return rescheduleCount; }
+    public void setRescheduleCount(int rescheduleCount) { this.rescheduleCount = rescheduleCount; }
+    public String getLastSyncAction() { return lastSyncAction; }
+    public void setLastSyncAction(String lastSyncAction) { this.lastSyncAction = lastSyncAction; }
+    public Long getLastSyncPositionSeconds() { return lastSyncPositionSeconds; }
+    public void setLastSyncPositionSeconds(Long lastSyncPositionSeconds) { this.lastSyncPositionSeconds = lastSyncPositionSeconds; }
+    public LocalDateTime getLastSyncAt() { return lastSyncAt; }
+    public void setLastSyncAt(LocalDateTime lastSyncAt) { this.lastSyncAt = lastSyncAt; }
     public DateStatus getStatus() { return status; }
     public void setStatus(DateStatus status) { this.status = status; }
     public LocalDateTime getRespondedAt() { return respondedAt; }

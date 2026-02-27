@@ -7,6 +7,12 @@ public class AuthResponse {
     private String email;
     private boolean emailVerified;
     private boolean profileComplete;
+    private String registrationStatus;
+    private int lastCompletedStep;
+    private int nextStep;
+    private boolean onboardingRequired;
+    private boolean twoFactorRequired;
+    private String twoFactorChannel;
 
     public String getAccessToken() {
         return accessToken;
@@ -54,5 +60,53 @@ public class AuthResponse {
 
     public void setProfileComplete(boolean profileComplete) {
         this.profileComplete = profileComplete;
+    }
+
+    public String getRegistrationStatus() {
+        return registrationStatus;
+    }
+
+    public void setRegistrationStatus(String registrationStatus) {
+        this.registrationStatus = registrationStatus;
+    }
+
+    public int getLastCompletedStep() {
+        return lastCompletedStep;
+    }
+
+    public void setLastCompletedStep(int lastCompletedStep) {
+        this.lastCompletedStep = lastCompletedStep;
+    }
+
+    public int getNextStep() {
+        return nextStep;
+    }
+
+    public void setNextStep(int nextStep) {
+        this.nextStep = nextStep;
+    }
+
+    public boolean isOnboardingRequired() {
+        return onboardingRequired;
+    }
+
+    public void setOnboardingRequired(boolean onboardingRequired) {
+        this.onboardingRequired = onboardingRequired;
+    }
+
+    public boolean isTwoFactorRequired() {
+        return twoFactorRequired;
+    }
+
+    public void setTwoFactorRequired(boolean twoFactorRequired) {
+        this.twoFactorRequired = twoFactorRequired;
+    }
+
+    public String getTwoFactorChannel() {
+        return twoFactorChannel;
+    }
+
+    public void setTwoFactorChannel(String twoFactorChannel) {
+        this.twoFactorChannel = twoFactorChannel;
     }
 }

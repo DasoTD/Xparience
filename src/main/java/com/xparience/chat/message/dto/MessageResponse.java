@@ -11,8 +11,11 @@ public class MessageResponse {
     private String senderName;
     private String content;
     private MessageType type;
+    private boolean isDelivered;
     private boolean isRead;
     private LocalDateTime sentAt;
+    private LocalDateTime deliveredAt;
+    private LocalDateTime readAt;
 
     public Long getMessageId() {
         return messageId;
@@ -70,11 +73,35 @@ public class MessageResponse {
         isRead = read;
     }
 
+    public boolean isDelivered() {
+        return isDelivered;
+    }
+
+    public void setDelivered(boolean delivered) {
+        isDelivered = delivered;
+    }
+
     public LocalDateTime getSentAt() {
         return sentAt;
     }
 
     public void setSentAt(LocalDateTime sentAt) {
         this.sentAt = sentAt;
+    }
+
+    public LocalDateTime getDeliveredAt() {
+        return deliveredAt;
+    }
+
+    public void setDeliveredAt(LocalDateTime deliveredAt) {
+        this.deliveredAt = deliveredAt;
+    }
+
+    public LocalDateTime getReadAt() {
+        return readAt;
+    }
+
+    public void setReadAt(LocalDateTime readAt) {
+        this.readAt = readAt;
     }
 }

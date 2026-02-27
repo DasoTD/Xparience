@@ -3,6 +3,13 @@ package com.xparience.date;
 import com.xparience.common.ApiResponse;
 import com.xparience.date.dto.CreateDateInviteRequest;
 import com.xparience.date.dto.DateInviteResponse;
+import com.xparience.date.dto.PlaybackSyncRequest;
+import com.xparience.date.dto.PlaybackSyncStateResponse;
+import com.xparience.date.dto.PostDateAnalyticsResponse;
+import com.xparience.date.dto.RescheduleDateRequest;
+import com.xparience.date.dto.StartVideoRoomRequest;
+import com.xparience.date.dto.StreamingIntegrationResponse;
+import com.xparience.date.dto.VideoRoomResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -52,5 +59,64 @@ public class DateInviteController {
     public ResponseEntity<ApiResponse<List<DateInviteResponse>>> getPendingInvites() {
         return ResponseEntity.ok(ApiResponse.success(
                 "Pending invites", dateInviteService.getPendingInvites()));
+    }
+
+    @PostMapping("/{inviteId}/start-room")
+    @Operation(summary = "Start or join WebRTC room for accepted virtual date")
+    public ResponseEntity<ApiResponse<VideoRoomResponse>> startRoom(
+            @PathVariable Long inviteId,
+            @RequestBody(required = false) StartVideoRoomRequest request) {
+        return ResponseEntity.ok(ApiResponse.success(
+                "Video room ready", dateInviteService.startVideoRoom(inviteId, request)));
+    }
+
+    @PostMapping("/{inviteId}/sync")
+    @Operation(summary = "Send synchronized play/pause/seek event")
+    public ResponseEntity<ApiResponse<PlaybackSyncStateResponse>> syncPlayback(
+            @PathVariable Long inviteId,
+            @Valid @RequestBody PlaybackSyncRequest request) {
+        return ResponseEntity.ok(ApiResponse.success(
+                "Sync event processed", dateInviteService.syncPlayback(inviteId, request)));
+    }
+
+    @GetMapping("/{inviteId}/sync-state")
+    @Operation(summary = "Get latest synchronized playback state")
+    public ResponseEntity<ApiResponse<PlaybackSyncStateResponse>> getSyncState(
+            @PathVariable Long inviteId) {
+        return ResponseEntity.ok(ApiResponse.success(
+                "Sync state", dateInviteService.getSyncState(inviteId)));
+    }
+
+    @PostMapping("/{inviteId}/end")
+    @Operation(summary = "End virtual date")
+    public ResponseEntity<ApiResponse<PostDateAnalyticsResponse>> endDate(
+            @PathVariable Long inviteId) {
+        return ResponseEntity.ok(ApiResponse.success(
+                "Date ended", dateInviteService.endDate(inviteId)));
+    }
+
+    @PostMapping("/{inviteId}/reschedule")
+    @Operation(summary = "Reschedule date")
+    public ResponseEntity<ApiResponse<DateInviteResponse>> rescheduleDate(
+            @PathVariable Long inviteId,
+            @Valid @RequestBody RescheduleDateRequest request) {
+        return ResponseEntity.ok(ApiResponse.success(
+                "Date rescheduled", dateInviteService.reschedule(inviteId, request)));
+    }
+
+    @GetMapping("/{inviteId}/analytics")
+    @Operation(summary = "Get post-date analytics")
+    public ResponseEntity<ApiResponse<PostDateAnalyticsResponse>> getAnalytics(
+            @PathVariable Long inviteId) {
+        return ResponseEntity.ok(ApiResponse.success(
+                "Post-date analytics", dateInviteService.getPostDateAnalytics(inviteId)));
+    }
+
+    @GetMapping("/{inviteId}/streaming")
+    @Operation(summary = "Get streaming platform integration context")
+    public ResponseEntity<ApiResponse<StreamingIntegrationResponse>> getStreamingIntegration(
+            @PathVariable Long inviteId) {
+        return ResponseEntity.ok(ApiResponse.success(
+                "Streaming integration", dateInviteService.getStreamingIntegration(inviteId)));
     }
 }

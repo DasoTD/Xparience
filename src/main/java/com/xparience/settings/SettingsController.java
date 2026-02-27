@@ -3,6 +3,7 @@ package com.xparience.settings;
 import com.xparience.common.ApiResponse;
 import com.xparience.settings.dto.ChangePasswordRequest;
 import com.xparience.settings.dto.SettingsSummaryResponse;
+import com.xparience.settings.dto.TwoFactorToggleRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -39,5 +40,12 @@ public class SettingsController {
     @Operation(summary = "Log out current user")
     public ResponseEntity<ApiResponse<String>> logOut() {
         return ResponseEntity.ok(ApiResponse.success(settingsService.logOut()));
+    }
+
+    @PutMapping("/2fa")
+    @Operation(summary = "Enable or disable account 2FA")
+    public ResponseEntity<ApiResponse<String>> toggleTwoFactor(
+            @RequestBody TwoFactorToggleRequest request) {
+        return ResponseEntity.ok(ApiResponse.success(settingsService.toggleTwoFactor(request.enabled())));
     }
 }

@@ -14,6 +14,10 @@ public interface OtpRepository extends JpaRepository<OtpToken, Long> {
 
     Optional<OtpToken> findByTokenAndType(String token, OtpType type);
 
+    Optional<OtpToken> findTopByUserIdAndTypeOrderByCreatedAtDesc(Long userId, OtpType type);
+
+    Optional<OtpToken> findByUserIdAndTokenAndType(Long userId, String token, OtpType type);
+
     @Modifying
     @Query("DELETE FROM OtpToken o WHERE o.user.id = :userId AND o.type = :type")
     void deleteAllByUserIdAndType(@Param("userId") Long userId,
