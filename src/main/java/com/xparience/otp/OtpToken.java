@@ -26,9 +26,15 @@ public class OtpToken {
     private LocalDateTime expiresAt;
     private LocalDateTime confirmedAt;
     private LocalDateTime createdAt;
+    private Integer attemptsRemaining;
 
     @PrePersist
-    protected void onCreate() { createdAt = LocalDateTime.now(); }
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        if (attemptsRemaining == null) {
+            attemptsRemaining = 3;
+        }
+    }
 
     public boolean isExpired() { return LocalDateTime.now().isAfter(expiresAt); }
 
@@ -40,6 +46,7 @@ public class OtpToken {
     public LocalDateTime getExpiresAt() { return expiresAt; }
     public LocalDateTime getConfirmedAt() { return confirmedAt; }
     public LocalDateTime getCreatedAt() { return createdAt; }
+    public Integer getAttemptsRemaining() { return attemptsRemaining; }
 
     // Setters
     public void setId(Long id) { this.id = id; }
@@ -48,4 +55,5 @@ public class OtpToken {
     public void setUser(User user) { this.user = user; }
     public void setExpiresAt(LocalDateTime expiresAt) { this.expiresAt = expiresAt; }
     public void setConfirmedAt(LocalDateTime confirmedAt) { this.confirmedAt = confirmedAt; }
+    public void setAttemptsRemaining(Integer attemptsRemaining) { this.attemptsRemaining = attemptsRemaining; }
 }

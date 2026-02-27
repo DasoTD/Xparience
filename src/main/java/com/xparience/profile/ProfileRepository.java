@@ -31,7 +31,8 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
            "p.preferencesComplete = true AND " +
            "p.nonNegotiablesComplete = true AND " +
            "p.nutritionVibeComplete = true AND " +
-           "p.personalityQuizComplete = true")
+           "p.personalityQuizComplete = true AND " +
+           "p.reviewSubmitted = true")
     Page<Profile> findAllCompleteProfiles(Pageable pageable);
 
     // Find profiles matching gender preference (for AI matching)

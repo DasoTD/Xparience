@@ -10,6 +10,10 @@ public class VerificationStatusResponse {
     private boolean faceVerificationComplete;
     private boolean faceMatchPassed;
     private Double faceMatchConfidence;
+    private boolean livenessPassed;
+    private boolean idQualityPassed;
+    private boolean duplicateIdDetected;
+    private Integer selfieAttempts;
     private VerificationStatus status;
     private String reviewNote;
     private LocalDateTime submittedAt;
@@ -24,6 +28,14 @@ public class VerificationStatusResponse {
     public void setFaceMatchPassed(boolean faceMatchPassed) { this.faceMatchPassed = faceMatchPassed; }
     public Double getFaceMatchConfidence() { return faceMatchConfidence; }
     public void setFaceMatchConfidence(Double faceMatchConfidence) { this.faceMatchConfidence = faceMatchConfidence; }
+    public boolean isLivenessPassed() { return livenessPassed; }
+    public void setLivenessPassed(boolean livenessPassed) { this.livenessPassed = livenessPassed; }
+    public boolean isIdQualityPassed() { return idQualityPassed; }
+    public void setIdQualityPassed(boolean idQualityPassed) { this.idQualityPassed = idQualityPassed; }
+    public boolean isDuplicateIdDetected() { return duplicateIdDetected; }
+    public void setDuplicateIdDetected(boolean duplicateIdDetected) { this.duplicateIdDetected = duplicateIdDetected; }
+    public Integer getSelfieAttempts() { return selfieAttempts; }
+    public void setSelfieAttempts(Integer selfieAttempts) { this.selfieAttempts = selfieAttempts; }
     public VerificationStatus getStatus() { return status; }
     public void setStatus(VerificationStatus status) { this.status = status; }
     public String getReviewNote() { return reviewNote; }

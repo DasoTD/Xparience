@@ -14,11 +14,17 @@ public interface VerificationRepository extends JpaRepository<VerificationRecord
 
     Optional<VerificationRecord> findTopByUserIdOrderByCreatedAtDesc(Long userId);
 
+       boolean existsByIdNumberAndUserIdNot(String idNumber, Long userId);
+
+       Optional<VerificationRecord> findTopByIdNumberOrderByCreatedAtDesc(String idNumber);
+
     boolean existsByUserIdAndStatus(Long userId, VerificationStatus status);
 
     @Query("SELECT v FROM VerificationRecord v WHERE v.status = 'UNDER_REVIEW' " +
            "ORDER BY v.submittedAt ASC")
     List<VerificationRecord> findAllUnderReview();
+
+    List<VerificationRecord> findAllByStatusOrderBySubmittedAtAsc(VerificationStatus status);
 
     @Modifying
     @Query("UPDATE VerificationRecord v SET v.status = :status, " +

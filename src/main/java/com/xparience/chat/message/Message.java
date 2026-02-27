@@ -28,9 +28,11 @@ public class Message {
     @Enumerated(EnumType.STRING)
     private MessageType type = MessageType.TEXT;
 
+    private boolean isDelivered = false;
     private boolean isRead = false;
 
     private LocalDateTime sentAt;
+    private LocalDateTime deliveredAt;
     private LocalDateTime readAt;
 
     @PrePersist
@@ -41,15 +43,17 @@ public class Message {
     public Message() {
     }
 
-    public Message(Long id, Conversation conversation, User sender, String content, MessageType type, boolean isRead,
-                   LocalDateTime sentAt, LocalDateTime readAt) {
+    public Message(Long id, Conversation conversation, User sender, String content, MessageType type, boolean isDelivered,
+                   boolean isRead, LocalDateTime sentAt, LocalDateTime deliveredAt, LocalDateTime readAt) {
         this.id = id;
         this.conversation = conversation;
         this.sender = sender;
         this.content = content;
         this.type = type;
+        this.isDelivered = isDelivered;
         this.isRead = isRead;
         this.sentAt = sentAt;
+        this.deliveredAt = deliveredAt;
         this.readAt = readAt;
     }
 
@@ -93,6 +97,14 @@ public class Message {
         this.type = type;
     }
 
+    public boolean isDelivered() {
+        return isDelivered;
+    }
+
+    public void setDelivered(boolean delivered) {
+        isDelivered = delivered;
+    }
+
     public boolean isRead() {
         return isRead;
     }
@@ -111,6 +123,14 @@ public class Message {
 
     public LocalDateTime getReadAt() {
         return readAt;
+    }
+
+    public LocalDateTime getDeliveredAt() {
+        return deliveredAt;
+    }
+
+    public void setDeliveredAt(LocalDateTime deliveredAt) {
+        this.deliveredAt = deliveredAt;
     }
 
     public void setReadAt(LocalDateTime readAt) {

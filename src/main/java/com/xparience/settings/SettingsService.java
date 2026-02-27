@@ -54,7 +54,16 @@ public class SettingsService {
         response.setVerificationStatus(verificationStatus);
         response.setCurrentPlan(currentPlan);
         response.setEmailVerified(user.isEmailVerified());
+        response.setTwoFactorEnabled(user.isTwoFactorEnabled());
         return response;
+    }
+
+    @Transactional
+    public String toggleTwoFactor(boolean enabled) {
+        User user = getCurrentUser();
+        user.setTwoFactorEnabled(enabled);
+        userRepository.save(user);
+        return enabled ? "Two-factor authentication enabled" : "Two-factor authentication disabled";
     }
 
     @Transactional

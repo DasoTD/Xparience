@@ -10,6 +10,7 @@ public class SettingsSummaryResponse {
     private VerificationStatus verificationStatus;
     private SubscriptionPlan currentPlan;
     private boolean emailVerified;
+    private boolean twoFactorEnabled;
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
@@ -23,4 +24,6 @@ public class SettingsSummaryResponse {
     public void setCurrentPlan(SubscriptionPlan currentPlan) { this.currentPlan = currentPlan; }
     public boolean isEmailVerified() { return emailVerified; }
     public void setEmailVerified(boolean emailVerified) { this.emailVerified = emailVerified; }
+    public boolean isTwoFactorEnabled() { return twoFactorEnabled; }
+    public void setTwoFactorEnabled(boolean twoFactorEnabled) { this.twoFactorEnabled = twoFactorEnabled; }
 }

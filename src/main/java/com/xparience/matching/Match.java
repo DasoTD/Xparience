@@ -32,6 +32,8 @@ public class Match {
 
     private boolean aiGenerated;
     private LocalDateTime matchedAt;
+    private LocalDateTime expiresAt;
+    private LocalDateTime respondedAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -86,6 +88,10 @@ public class Match {
     public void setAiGenerated(boolean aiGenerated) { this.aiGenerated = aiGenerated; }
     public LocalDateTime getMatchedAt() { return matchedAt; }
     public void setMatchedAt(LocalDateTime matchedAt) { this.matchedAt = matchedAt; }
+    public LocalDateTime getExpiresAt() { return expiresAt; }
+    public void setExpiresAt(LocalDateTime expiresAt) { this.expiresAt = expiresAt; }
+    public LocalDateTime getRespondedAt() { return respondedAt; }
+    public void setRespondedAt(LocalDateTime respondedAt) { this.respondedAt = respondedAt; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }

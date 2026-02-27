@@ -19,6 +19,10 @@ public class BasicInfoRequest {
     private String reasonForJoining;
     @NotBlank
     private String city;
+    private Double latitude;
+    private Double longitude;
+    private Integer matchRadiusKm;
+    private String timezone;
 
     public String getFullName() { return fullName; }
     public void setFullName(String fullName) { this.fullName = fullName; }
@@ -34,4 +38,12 @@ public class BasicInfoRequest {
     public void setReasonForJoining(String reasonForJoining) { this.reasonForJoining = reasonForJoining; }
     public String getCity() { return city; }
     public void setCity(String city) { this.city = city; }
+    public Double getLatitude() { return latitude; }
+    public void setLatitude(Double latitude) { this.latitude = latitude; }
+    public Double getLongitude() { return longitude; }
+    public void setLongitude(Double longitude) { this.longitude = longitude; }
+    public Integer getMatchRadiusKm() { return matchRadiusKm; }
+    public void setMatchRadiusKm(Integer matchRadiusKm) { this.matchRadiusKm = matchRadiusKm; }
+    public String getTimezone() { return timezone; }
+    public void setTimezone(String timezone) { this.timezone = timezone; }
 }

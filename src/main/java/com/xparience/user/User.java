@@ -31,6 +31,7 @@ public class User implements UserDetails {
 
     private boolean emailVerified = false;
     private boolean identityVerified = false;
+    private boolean twoFactorEnabled = false;
     private boolean enabled = true;
 
     private LocalDateTime createdAt;
@@ -67,6 +68,7 @@ public class User implements UserDetails {
     public Role getRole() { return role; }
     public boolean isEmailVerified() { return emailVerified; }
     public boolean isIdentityVerified() { return identityVerified; }
+    public boolean isTwoFactorEnabled() { return twoFactorEnabled; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
 
@@ -78,5 +80,6 @@ public class User implements UserDetails {
     public void setRole(Role role) { this.role = role; }
     public void setEmailVerified(boolean emailVerified) { this.emailVerified = emailVerified; }
     public void setIdentityVerified(boolean identityVerified) { this.identityVerified = identityVerified; }
+    public void setTwoFactorEnabled(boolean twoFactorEnabled) { this.twoFactorEnabled = twoFactorEnabled; }
     public void setEnabled(boolean enabled) { this.enabled = enabled; }
 }

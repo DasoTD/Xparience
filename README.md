@@ -27,7 +27,12 @@ export CLOUDINARY_API_KEY=your-api-key
 export CLOUDINARY_API_SECRET=your-api-secret
 ```
 
-### 3. Run schema
+### 3. Schema migration (automatic)
+On startup, the app now runs `src/main/resources/schema.sql` automatically (`spring.sql.init.mode=always`) and applies idempotent fixes, including:
+- `users.two_factor_enabled`
+- `otp_tokens_type_check` including `LOGIN_2FA`
+
+You can still run the script manually if needed:
 ```bash
 psql -U postgres -d xparience_db -f src/main/resources/schema.sql
 ```

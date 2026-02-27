@@ -18,6 +18,8 @@ public class CreateDateInviteRequest {
     private String title;
     private String description;
     private String contentLink;
+    private String streamingContentId;
+    private Boolean screenshotBlockingRequired;
     private LocalDateTime scheduledAt;
 
     public Long getRecipientUserId() {
@@ -66,6 +68,22 @@ public class CreateDateInviteRequest {
 
     public void setContentLink(String contentLink) {
         this.contentLink = contentLink;
+    }
+
+    public String getStreamingContentId() {
+        return streamingContentId;
+    }
+
+    public void setStreamingContentId(String streamingContentId) {
+        this.streamingContentId = streamingContentId;
+    }
+
+    public Boolean getScreenshotBlockingRequired() {
+        return screenshotBlockingRequired;
+    }
+
+    public void setScreenshotBlockingRequired(Boolean screenshotBlockingRequired) {
+        this.screenshotBlockingRequired = screenshotBlockingRequired;
     }
 
     public LocalDateTime getScheduledAt() {

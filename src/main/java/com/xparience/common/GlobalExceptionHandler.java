@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
             errors.put(field, error.getDefaultMessage());
         });
         return ResponseEntity.badRequest()
-                .body(ApiResponse.error("Validation failed"));
+                .body(new ApiResponse<>(false, "Validation failed", errors));
     }
 
     @ExceptionHandler(BadCredentialsException.class)
@@ -34,14 +34,75 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ApiResponse<Void>> handleRuntime(RuntimeException ex) {
+    public ResponseEntity<ApiResponse<Object>> handleRuntime(RuntimeException ex) {
+        String message = ex.getMessage();
+
+        if (message != null && message.contains("Too many attempts")) {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                    .body(new ApiResponse<>(false, message, extractDynamicFields(message)));
+        }
+
+        if (message != null && message.contains("temporarily locked")) {
+            return ResponseEntity.status(HttpStatus.LOCKED)
+                    .body(new ApiResponse<>(false, message, extractDynamicFields(message)));
+        }
+
+        if (message != null && message.contains("CAPTCHA is required")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>(false, message, Map.of("captchaRequired", true)));
+        }
+
+        Map<String, Object> details = extractDynamicFields(message);
+        if (details.isEmpty()) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(message));
+        }
+
         return ResponseEntity.badRequest()
-                .body(ApiResponse.error(ex.getMessage()));
+                .body(new ApiResponse<>(false, message, details));
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGeneric(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiResponse.error("An unexpected error occurred"));
+    }
+
+    private Map<String, Object> extractDynamicFields(String message) {
+        Map<String, Object> details = new HashMap<>();
+        if (message == null) {
+            return details;
+        }
+
+        if (message.contains("attemptsRemaining=")) {
+            String value = message.substring(message.indexOf("attemptsRemaining=") + "attemptsRemaining=".length()).trim();
+            int endIdx = value.indexOf(' ');
+            String number = endIdx >= 0 ? value.substring(0, endIdx) : value;
+            try {
+                details.put("attemptsRemaining", Integer.parseInt(number));
+            } catch (NumberFormatException ignored) {
+            }
+        }
+
+        if (message.contains("resendAvailableInSeconds=")) {
+            String value = message.substring(message.indexOf("resendAvailableInSeconds=") + "resendAvailableInSeconds=".length()).trim();
+            int endIdx = value.indexOf(' ');
+            String number = endIdx >= 0 ? value.substring(0, endIdx) : value;
+            try {
+                details.put("resendAvailableInSeconds", Long.parseLong(number));
+            } catch (NumberFormatException ignored) {
+            }
+        }
+
+        if (message.startsWith("Too many attempts. Retry in ") || message.contains("temporarily locked")) {
+            String digits = message.replaceAll("\\D+", "");
+            if (!digits.isBlank()) {
+                try {
+                    details.put("retryAfterSeconds", Long.parseLong(digits));
+                } catch (NumberFormatException ignored) {
+                }
+            }
+        }
+
+        return details;
     }
 }

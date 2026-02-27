@@ -16,8 +16,15 @@ public class DateInviteResponse {
     private StreamingPlatform streamingPlatform;
     private String title;
     private String description;
+    private String contentLink;
+    private String streamingContentId;
     private DateStatus status;
     private LocalDateTime scheduledAt;
+    private LocalDateTime dateStartedAt;
+    private LocalDateTime dateEndedAt;
+    private String webrtcRoomId;
+    private boolean screenshotBlockingRequired;
+    private int rescheduleCount;
     private LocalDateTime createdAt;
 
     public Long getInviteId() {
@@ -92,6 +99,22 @@ public class DateInviteResponse {
         this.description = description;
     }
 
+    public String getContentLink() {
+        return contentLink;
+    }
+
+    public void setContentLink(String contentLink) {
+        this.contentLink = contentLink;
+    }
+
+    public String getStreamingContentId() {
+        return streamingContentId;
+    }
+
+    public void setStreamingContentId(String streamingContentId) {
+        this.streamingContentId = streamingContentId;
+    }
+
     public DateStatus getStatus() {
         return status;
     }
@@ -106,6 +129,46 @@ public class DateInviteResponse {
 
     public void setScheduledAt(LocalDateTime scheduledAt) {
         this.scheduledAt = scheduledAt;
+    }
+
+    public LocalDateTime getDateStartedAt() {
+        return dateStartedAt;
+    }
+
+    public void setDateStartedAt(LocalDateTime dateStartedAt) {
+        this.dateStartedAt = dateStartedAt;
+    }
+
+    public LocalDateTime getDateEndedAt() {
+        return dateEndedAt;
+    }
+
+    public void setDateEndedAt(LocalDateTime dateEndedAt) {
+        this.dateEndedAt = dateEndedAt;
+    }
+
+    public String getWebrtcRoomId() {
+        return webrtcRoomId;
+    }
+
+    public void setWebrtcRoomId(String webrtcRoomId) {
+        this.webrtcRoomId = webrtcRoomId;
+    }
+
+    public boolean isScreenshotBlockingRequired() {
+        return screenshotBlockingRequired;
+    }
+
+    public void setScreenshotBlockingRequired(boolean screenshotBlockingRequired) {
+        this.screenshotBlockingRequired = screenshotBlockingRequired;
+    }
+
+    public int getRescheduleCount() {
+        return rescheduleCount;
+    }
+
+    public void setRescheduleCount(int rescheduleCount) {
+        this.rescheduleCount = rescheduleCount;
     }
 
     public LocalDateTime getCreatedAt() {
