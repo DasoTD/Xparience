@@ -98,6 +98,7 @@ public class OtpService {
             mailSender.send(message);
         } catch (Exception e) {
             log.warn("Failed to send OTP email to {}: {}", email, e.getMessage());
+            throw new RuntimeException("Failed to send verification email. Please check mail configuration and try again.");
         }
     }
 

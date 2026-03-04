@@ -31,11 +31,14 @@ public class SecurityConfig {
     };
 
     private final JwtAuthenticationFilter jwtAuthFilter;
+        private final AccessLoggingFilter accessLoggingFilter;
     private final AuthenticationProvider authenticationProvider;
 
     public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter,
+                                                  AccessLoggingFilter accessLoggingFilter,
                           AuthenticationProvider authenticationProvider) {
         this.jwtAuthFilter = jwtAuthFilter;
+                this.accessLoggingFilter = accessLoggingFilter;
         this.authenticationProvider = authenticationProvider;
     }
 
@@ -53,7 +56,8 @@ public class SecurityConfig {
                 )
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter,
-                        UsernamePasswordAuthenticationFilter.class);
+                        UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(accessLoggingFilter, JwtAuthenticationFilter.class);
 
         return http.build();
     }

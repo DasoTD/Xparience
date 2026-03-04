@@ -1,0 +1,20 @@
+[Unit]
+Description=Xparience Backend (%i)
+After=network.target
+
+[Service]
+Type=simple
+User=xparience
+Group=xparience
+EnvironmentFile=/etc/xparience/common.env
+EnvironmentFile=-/etc/xparience/%i.env
+WorkingDirectory=/opt/xparience/%i
+ExecStart=/usr/bin/java -jar /opt/xparience/%i/app.jar --server.port=${SERVER_PORT}
+SuccessExitStatus=143
+Restart=always
+RestartSec=5
+StandardOutput=append:/var/log/xparience/%i.out.log
+StandardError=append:/var/log/xparience/%i.err.log
+
+[Install]
+WantedBy=multi-user.target

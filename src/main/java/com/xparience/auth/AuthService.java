@@ -94,7 +94,8 @@ public class AuthService {
         userRepository.save(user);
 
         OtpType otpType = OtpType.EMAIL_VERIFICATION;
-        OtpDispatchResponse response = otpService.generateAndSendOtp(user, otpType, !isBlank(normalizedPhone));
+        boolean sendViaPhone = isBlank(normalizedEmail) && !isBlank(normalizedPhone);
+        OtpDispatchResponse response = otpService.generateAndSendOtp(user, otpType, sendViaPhone);
         response.setMessage(isBlank(normalizedPhone)
             ? "Account created! Please check your email for the verification code."
             : "Account created! Please check your phone for the verification code.");
