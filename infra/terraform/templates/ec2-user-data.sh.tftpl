@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euxo pipefail
+
+export DEBIAN_FRONTEND=noninteractive
+apt-get update -y
+apt-get install -y nginx git maven unzip curl ca-certificates
+
+if ! command -v java >/dev/null 2>&1; then
+  apt-get install -y openjdk-21-jdk
+fi
+
+systemctl enable nginx
+systemctl restart nginx
+
+id -u xparience >/dev/null 2>&1 || useradd --system --create-home --shell /bin/bash xparience
+mkdir -p /opt/xparience /etc/xparience /var/log/xparience
+chown -R xparience:xparience /opt/xparience /var/log/xparience
+
+cat >/etc/motd <<'EOF'
+Xparience EC2 host provisioned by Terraform.
+Next steps:
+1) Clone/update repository and run bootstrap script:
+   sudo bash deploy/ec2/bootstrap-ec2.sh
+2) Configure /etc/xparience/common.env
+3) Configure GitHub Actions secrets and trigger deployment
+EOF
+
+%{ if github_repo_url != "" ~}
+sudo -u xparience git clone ${github_repo_url} /opt/xparience/source || true
+%{ endif ~}

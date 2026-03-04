@@ -35,3 +35,15 @@ Thumbs.db
 !.github/workflows/*.yml
 
 *.ps1
+## Terraform local artifacts
+.terraform/
+**/.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraform.tfstate.lock.info
+infra/terraform/terraform.tfvars

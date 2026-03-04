@@ -1,0 +1,24 @@
+aws_region          = "eu-west-2"
+project_name        = "xparience"
+environment         = "prod"
+
+# Restrict SSH to your current public IP/CIDR, e.g. "203.0.113.10/32"
+admin_cidr          = "203.0.113.10/32"
+
+ec2_instance_type   = "t3.medium"
+ec2_key_pair_name   = "your-existing-keypair-name"
+allocate_eip        = true
+
+db_name             = "xpdb"
+db_username         = "postgres"
+# Optional: set explicit password, otherwise Terraform generates one.
+# db_password       = "Use-A-Strong-Password-Here"
+db_instance_class   = "db.t4g.micro"
+db_allocated_storage = 30
+db_engine_version   = "16.4"
+db_backup_retention_days = 7
+db_deletion_protection   = true
+db_multi_az         = false
+
+# Optional convenience clone URL on EC2 bootstrap
+# github_repo_url   = "https://github.com/your-org/your-repo.git"

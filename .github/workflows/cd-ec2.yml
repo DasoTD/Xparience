@@ -33,21 +33,22 @@ jobs:
 
       - name: Validate deployment secrets
         env:
-          EC2_HOST: ${{ secrets.EC2_HOST }}
-          EC2_USER: ${{ secrets.EC2_USER }}
+          EC2_HOST: ${{ secrets.EC2_HOST || vars.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER || vars.EC2_USER }}
           EC2_SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
         run: |
           if [ -z "$EC2_HOST" ] || [ -z "$EC2_USER" ] || [ -z "$EC2_SSH_PRIVATE_KEY" ]; then
-            echo "Missing required GitHub secrets: EC2_HOST, EC2_USER, EC2_SSH_PRIVATE_KEY"
-            echo "Add them under Settings -> Secrets and variables -> Actions."
+            echo "Missing required configuration."
+            echo "Required: EC2_HOST (secret or variable), EC2_USER (secret or variable), EC2_SSH_PRIVATE_KEY (secret only)."
+            echo "Set them under Settings -> Secrets and variables -> Actions."
             exit 1
           fi
 
       - name: Upload deploy assets to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
+          host: ${{ secrets.EC2_HOST || vars.EC2_HOST }}
+          username: ${{ secrets.EC2_USER || vars.EC2_USER }}
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           source: "app.jar,deploy/ec2/deploy-blue-green.sh"
           target: "/tmp/xparience-deploy"
@@ -56,8 +57,8 @@ jobs:
       - name: Execute blue/green deployment
         uses: appleboy/ssh-action@v1.2.0
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
+          host: ${{ secrets.EC2_HOST || vars.EC2_HOST }}
+          username: ${{ secrets.EC2_USER || vars.EC2_USER }}
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           script_stop: true
           script: |

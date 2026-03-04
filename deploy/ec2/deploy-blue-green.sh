@@ -56,7 +56,12 @@ echo "Deploying release $RELEASE_ID to slot $INACTIVE_SLOT (port $INACTIVE_PORT)
 systemctl restart "xparience@$INACTIVE_SLOT"
 
 echo "Waiting for health check on inactive slot..."
-for _ in {1..60}; do
+for _ in {1..90}; do
+  if ! systemctl is-active --quiet "xparience@$INACTIVE_SLOT"; then
+    echo "Service xparience@$INACTIVE_SLOT is not active during startup"
+    journalctl -u "xparience@$INACTIVE_SLOT" -n 150 --no-pager || true
+    exit 1
+  fi
   if curl -fsS "http://127.0.0.1:$INACTIVE_PORT/api-docs" >/dev/null; then
     break
   fi
@@ -65,7 +70,8 @@ done
 
 if ! curl -fsS "http://127.0.0.1:$INACTIVE_PORT/api-docs" >/dev/null; then
   echo "Health check failed on $INACTIVE_SLOT"
-  journalctl -u "xparience@$INACTIVE_SLOT" -n 100 --no-pager || true
+  systemctl status "xparience@$INACTIVE_SLOT" --no-pager -l || true
+  journalctl -u "xparience@$INACTIVE_SLOT" -n 150 --no-pager || true
   exit 1
 fi
 
