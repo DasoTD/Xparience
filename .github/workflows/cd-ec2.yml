@@ -12,6 +12,11 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      EC2_HOST: ${{ vars.EC2_HOST != '' && vars.EC2_HOST || secrets.EC2_HOST }}
+      EC2_USER: ${{ vars.EC2_USER != '' && vars.EC2_USER || secrets.EC2_USER }}
+      EC2_PORT: '22'
+      EC2_SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
 
     steps:
       - name: Checkout
@@ -32,24 +37,26 @@ jobs:
           cp target/*.jar app.jar
 
       - name: Validate deployment secrets
-        env:
-          EC2_HOST: ${{ secrets.EC2_HOST || vars.EC2_HOST }}
-          EC2_USER: ${{ secrets.EC2_USER || vars.EC2_USER }}
-          EC2_SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
         run: |
-          if [ -z "$EC2_HOST" ] || [ -z "$EC2_USER" ] || [ -z "$EC2_SSH_PRIVATE_KEY" ]; then
+          if [ -z "$EC2_HOST" ] || [ -z "$EC2_USER" ] || [ -z "$EC2_SSH_PRIVATE_KEY" ] || [ -z "$EC2_PORT" ]; then
             echo "Missing required configuration."
-            echo "Required: EC2_HOST (secret or variable), EC2_USER (secret or variable), EC2_SSH_PRIVATE_KEY (secret only)."
+            echo "Required: EC2_HOST (variable preferred), EC2_USER (variable preferred), EC2_SSH_PRIVATE_KEY (secret only)."
             echo "Set them under Settings -> Secrets and variables -> Actions."
             exit 1
           fi
 
+      - name: Preflight SSH connectivity
+        run: |
+          echo "Checking SSH connectivity to $EC2_HOST:$EC2_PORT ..."
+          nc -zvw8 "$EC2_HOST" "$EC2_PORT"
+
       - name: Upload deploy assets to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.EC2_HOST || vars.EC2_HOST }}
-          username: ${{ secrets.EC2_USER || vars.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          host: ${{ env.EC2_HOST }}
+          username: ${{ env.EC2_USER }}
+          port: ${{ env.EC2_PORT }}
+          key: ${{ env.EC2_SSH_PRIVATE_KEY }}
           source: "app.jar,deploy/ec2/deploy-blue-green.sh"
           target: "/tmp/xparience-deploy"
           overwrite: true
@@ -57,9 +64,10 @@ jobs:
       - name: Execute blue/green deployment
         uses: appleboy/ssh-action@v1.2.0
         with:
-          host: ${{ secrets.EC2_HOST || vars.EC2_HOST }}
-          username: ${{ secrets.EC2_USER || vars.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          host: ${{ env.EC2_HOST }}
+          username: ${{ env.EC2_USER }}
+          port: ${{ env.EC2_PORT }}
+          key: ${{ env.EC2_SSH_PRIVATE_KEY }}
           script_stop: true
           script: |
             sudo chmod +x /tmp/xparience-deploy/deploy/ec2/deploy-blue-green.sh
