@@ -48,6 +48,8 @@ fi
 TARGET_DIR="$APP_ROOT/$INACTIVE_SLOT"
 TARGET_JAR="$TARGET_DIR/app.jar"
 RELEASE_JAR="$RELEASES_DIR/app-$RELEASE_ID.jar"
+SLOT_OUT_LOG="/var/log/xparience/$INACTIVE_SLOT.out.log"
+SLOT_ERR_LOG="/var/log/xparience/$INACTIVE_SLOT.err.log"
 
 cp "$JAR_PATH" "$RELEASE_JAR"
 ln -sfn "$RELEASE_JAR" "$TARGET_JAR"
@@ -59,7 +61,10 @@ echo "Waiting for health check on inactive slot..."
 for _ in {1..90}; do
   if ! systemctl is-active --quiet "xparience@$INACTIVE_SLOT"; then
     echo "Service xparience@$INACTIVE_SLOT is not active during startup"
+    systemctl status "xparience@$INACTIVE_SLOT" --no-pager -l || true
     journalctl -u "xparience@$INACTIVE_SLOT" -n 150 --no-pager || true
+    [[ -f "$SLOT_ERR_LOG" ]] && tail -n 200 "$SLOT_ERR_LOG" || true
+    [[ -f "$SLOT_OUT_LOG" ]] && tail -n 200 "$SLOT_OUT_LOG" || true
     exit 1
   fi
   if curl -fsS "http://127.0.0.1:$INACTIVE_PORT/api-docs" >/dev/null; then
@@ -72,6 +77,8 @@ if ! curl -fsS "http://127.0.0.1:$INACTIVE_PORT/api-docs" >/dev/null; then
   echo "Health check failed on $INACTIVE_SLOT"
   systemctl status "xparience@$INACTIVE_SLOT" --no-pager -l || true
   journalctl -u "xparience@$INACTIVE_SLOT" -n 150 --no-pager || true
+  [[ -f "$SLOT_ERR_LOG" ]] && tail -n 200 "$SLOT_ERR_LOG" || true
+  [[ -f "$SLOT_OUT_LOG" ]] && tail -n 200 "$SLOT_OUT_LOG" || true
   exit 1
 fi
 
