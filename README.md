@@ -22,7 +22,7 @@ export DB_PASSWORD=yourpassword
 export SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5433/xparience_db
 export JWT_SECRET=your-256-bit-base64-secret
 export MAIL_USERNAME=timileyindaso@gmail.com
-export MAIL_PASSWORD=zokt jflx uwqs ptbr
+export MAIL_PASSWORD=
 export CLOUDINARY_CLOUD_NAME=your-cloud-name
 export CLOUDINARY_API_KEY=your-api-key
 export CLOUDINARY_API_SECRET=your-api-secret
@@ -33,14 +33,14 @@ Set these before starting the app:
 ```bash
 export SPRING_DATASOURCE_URL=jdbc:postgresql://xpdb.cty404w2y67l.eu-west-2.rds.amazonaws.com:5432/xpdb?sslmode=require
 export DB_USERNAME=postgres
-export DB_PASSWORD=TDPGSuper205$
+export DB_PASSWORD=
 ```
 
 PowerShell equivalent:
 ```powershell
 $env:SPRING_DATASOURCE_URL='jdbc:postgresql://xpdb.cty404w2y67l.eu-west-2.rds.amazonaws.com:5432/xpdb?sslmode=require'
 $env:DB_USERNAME='postgres'
-$env:DB_PASSWORD='TDPGSuper205$'
+$env:DB_PASSWORD=''
 ```
 
 If this is a fresh/empty RDS database, add:
