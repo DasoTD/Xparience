@@ -31,6 +31,18 @@ jobs:
         run: |
           cp target/*.jar app.jar
 
+      - name: Validate deployment secrets
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+          EC2_SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+        run: |
+          if [ -z "$EC2_HOST" ] || [ -z "$EC2_USER" ] || [ -z "$EC2_SSH_PRIVATE_KEY" ]; then
+            echo "Missing required GitHub secrets: EC2_HOST, EC2_USER, EC2_SSH_PRIVATE_KEY"
+            echo "Add them under Settings -> Secrets and variables -> Actions."
+            exit 1
+          fi
+
       - name: Upload deploy assets to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
