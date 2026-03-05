@@ -56,6 +56,36 @@ jobs:
         run: |
           set -euo pipefail
 
+          wait_for_ready() {
+            local max_attempts=30
+            local sleep_seconds=20
+            local attempt=1
+
+            while [ "$attempt" -le "$max_attempts" ]; do
+              local status health
+              status="$(aws elasticbeanstalk describe-environments \
+                --environment-names "${EB_ENVIRONMENT_NAME}" \
+                --query 'Environments[0].Status' \
+                --output text)"
+              health="$(aws elasticbeanstalk describe-environments \
+                --environment-names "${EB_ENVIRONMENT_NAME}" \
+                --query 'Environments[0].Health' \
+                --output text)"
+
+              echo "Environment state: status=${status}, health=${health} (attempt ${attempt}/${max_attempts})"
+
+              if [ "${status}" = "Ready" ]; then
+                return 0
+              fi
+
+              sleep "${sleep_seconds}"
+              attempt=$((attempt + 1))
+            done
+
+            echo "ERROR: Environment did not reach Ready state in time."
+            return 1
+          }
+
           BUCKET_NAME="$(aws elasticbeanstalk create-storage-location --output text)"
 
           aws s3 cp deploy.zip "s3://${BUCKET_NAME}/${S3_KEY}"
@@ -65,9 +95,25 @@ jobs:
             --version-label "${VERSION_LABEL}" \
             --source-bundle S3Bucket="${BUCKET_NAME}",S3Key="${S3_KEY}"
 
-          aws elasticbeanstalk update-environment \
-            --environment-name "${EB_ENVIRONMENT_NAME}" \
-            --version-label "${VERSION_LABEL}"
+          wait_for_ready
+
+          update_ok=0
+          for i in 1 2 3; do
+            echo "Starting environment update (attempt ${i}/3) ..."
+            if aws elasticbeanstalk update-environment \
+              --environment-name "${EB_ENVIRONMENT_NAME}" \
+              --version-label "${VERSION_LABEL}"; then
+              update_ok=1
+              break
+            fi
+            echo "Update request was rejected; waiting for environment to become Ready before retry ..."
+            wait_for_ready
+          done
+
+          if [ "$update_ok" -ne 1 ]; then
+            echo "ERROR: Failed to start environment update after retries."
+            exit 1
+          fi
 
           aws elasticbeanstalk wait environment-updated \
             --environment-names "${EB_ENVIRONMENT_NAME}"
