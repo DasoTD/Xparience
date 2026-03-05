@@ -106,11 +106,11 @@ resource "aws_security_group" "ec2" {
   vpc_id      = aws_vpc.main.id
 
   ingress {
-    description = "SSH from trusted admin CIDR"
+    description = "SSH from trusted admin and optional CI CIDRs"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [var.admin_cidr]
+    cidr_blocks = distinct(concat([var.admin_cidr], var.additional_ssh_cidrs))
   }
 
   ingress {

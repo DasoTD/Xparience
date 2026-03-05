@@ -39,6 +39,12 @@ variable "admin_cidr" {
   type        = string
 }
 
+variable "additional_ssh_cidrs" {
+  description = "Additional CIDRs allowed to SSH to EC2 (e.g. CI runners). Keep as small as possible."
+  type        = list(string)
+  default     = []
+}
+
 variable "ec2_instance_type" {
   description = "EC2 instance type for app host."
   type        = string
