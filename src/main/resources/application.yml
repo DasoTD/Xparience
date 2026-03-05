@@ -1,0 +1,81 @@
+server:
+  port: ${PORT:5000}
+
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5433/xparience_db}
+    username: ${DB_USERNAME:${SPRING_DATASOURCE_USERNAME:postgres}}
+    password: ${DB_PASSWORD:${SPRING_DATASOURCE_PASSWORD:}}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update #validate
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:timileyindaso@gmail.com}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  # Spring Boot 4.x - virtual threads (Java 21)
+  threads:
+    virtual:
+      enabled: true
+
+application:
+  security:
+    jwt:
+      secret-key: ${JWT_SECRET:ZGV2Snd0U2VjcmV0S2V5Rm9yVGVzdGluZ1B1cnBvc2UxMg==}
+      expiration: 86400000
+      refresh-token:
+        expiration: 604800000
+  sms:
+    provider: ${SMS_PROVIDER:log}
+    twilio-account-sid: ${TWILIO_ACCOUNT_SID:}
+    twilio-auth-token: ${TWILIO_AUTH_TOKEN:}
+    twilio-from-number: ${TWILIO_FROM_NUMBER:}
+  stripe:
+    secret-key: ${STRIPE_SECRET_KEY:}
+    webhook-secret: ${STRIPE_WEBHOOK_SECRET:}
+    success-url: ${STRIPE_SUCCESS_URL:https://example.com/subscription/success?session_id={CHECKOUT_SESSION_ID}}
+    cancel-url: ${STRIPE_CANCEL_URL:https://example.com/subscription/cancelled}
+
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:dev}
+  api-key: ${CLOUDINARY_API_KEY:dev}
+  api-secret: ${CLOUDINARY_API_SECRET:dev}
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+logging:
+  file:
+    name: ${LOG_FILE_NAME:${LOG_PATH:/var/log/xparience}/xparience.log}
+  level:
+    org.springframework.web.socket.config.WebSocketMessageBrokerStats: WARN
+  logback:
+    rollingpolicy:
+      file-name-pattern: ${LOG_FILE_PATTERN:${LOG_PATH:/var/log/xparience}/xparience.%d{yyyy-MM-dd}.%i.log.gz}
+      max-file-size: ${LOG_MAX_FILE_SIZE:20MB}
+      max-history: ${LOG_MAX_HISTORY:30}
+      total-size-cap: ${LOG_TOTAL_SIZE_CAP:2GB}

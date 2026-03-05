@@ -29,7 +29,7 @@ Thumbs.db
 *~
 
 *.http
-*.yml
+# *.yml
 !.github/
 !.github/workflows/
 !.github/workflows/*.yml

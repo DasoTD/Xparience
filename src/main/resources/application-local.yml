@@ -1,0 +1,41 @@
+spring:
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+  jpa:
+    hibernate:
+      ddl-auto: update
+  mail:
+    username: ${MAIL_USERNAME:timileyindaso@gmail.com}
+    password: ${MAIL_PASSWORD:zokt jflx uwqs ptbr}
+
+application:
+  security:
+    jwt:
+      secret-key: ZGV2Snd0U2VjcmV0S2V5Rm9yVGVzdGluZ1B1cnBvc2UxMg==
+  sms:
+    provider: ${SMS_PROVIDER:log}
+    twilio-account-sid: ${TWILIO_ACCOUNT_SID:}
+    twilio-auth-token: ${TWILIO_AUTH_TOKEN:}
+    twilio-from-number: ${TWILIO_FROM_NUMBER:}
+  stripe:
+    secret-key: ${STRIPE_SECRET_KEY:}
+    webhook-secret: ${STRIPE_WEBHOOK_SECRET:}
+    success-url: ${STRIPE_SUCCESS_URL:https://example.com/subscription/success?session_id={CHECKOUT_SESSION_ID}}
+    cancel-url: ${STRIPE_CANCEL_URL:https://example.com/subscription/cancelled}
+
+cloudinary:
+  cloud-name: dev
+  api-key: dev
+  api-secret: dev
+
+logging:
+  file:
+    name: ${LOG_FILE_NAME:${LOG_PATH:./logs/dev}/xparience-dev.log}
+  logback:
+    rollingpolicy:
+      file-name-pattern: ${LOG_FILE_PATTERN:${LOG_PATH:./logs/dev}/xparience-dev.%d{yyyy-MM-dd}.%i.log.gz}
+      max-file-size: ${LOG_MAX_FILE_SIZE:10MB}
+      max-history: ${LOG_MAX_HISTORY:14}
+      total-size-cap: ${LOG_TOTAL_SIZE_CAP:500MB}
