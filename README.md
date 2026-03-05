@@ -136,3 +136,44 @@ This provides near-zero downtime rolling cutover behind NGINX.
 | Settings      | /api/v1/settings        |
 | Subscription  | /api/v1/subscription    |
 | User Info     | /api/v1/user            |
+
+
+
+EC2 host details:
+- `EC2_HOST`: `13.135.83.217`
+- `EC2_USER`: `ubuntu`
+- `RDS endpoint`: `xparience-prod-db.cty404w2y67l.eu-west-2.rds.amazonaws.com`
+
+Copy/paste on EC2:
+```bash
+set -e
+sudo mkdir -p /opt/src
+cd /opt/src
+
+# replace with your real repo URL if needed
+sudo git clone https://github.com/DasoTD/xparience.git Xparience
+
+sudo chown -R ubuntu:ubuntu /opt/src/Xparience
+cd /opt/src/Xparience
+git checkout main
+git pull
+
+# bootstrap services/files on this host
+sudo bash deploy/ec2/bootstrap-ec2.sh
+
+# create production env with a strong JWT secret
+JWT_SECRET="$(openssl rand -base64 32)"
+sudo tee /etc/xparience/common.env >/dev/null <<EOF
+SPRING_DATASOURCE_URL=jdbc:postgresql://xparience-prod-db.cty404w2y67l.eu-west-2.rds.amazonaws.com:5432/xparience_db?sslmode=require
+DB_USERNAME=postgres
+DB_PASSWORD=REPLACE_WITH_REAL_DB_PASSWORD
+JWT_SECRET=${JWT_SECRET}
+MAIL_USERNAME=
+MAIL_PASSWORD=
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+EOF
+
+sudo chmod 600 /etc/xparience/common.env
+```
