@@ -81,46 +81,53 @@ mvn spring-boot:run -Dspring-boot.run.profiles=local
 http://localhost:8080/swagger-ui.html
 ```
 
-## Production Deployment (AWS EC2 + RDS + NGINX, Zero Downtime)
+## Production Deployment (AWS Elastic Beanstalk)
 
-This repo now includes blue/green deployment assets:
+Production deployment now uses Elastic Beanstalk via:
+- `.github/workflows/cd-eb.yml`
+- `Procfile`
+
+### One-time Elastic Beanstalk setup
+1. Create an Elastic Beanstalk application and environment (Java 21 / Corretto platform recommended).
+2. In your EB environment, configure application environment variables (same values you currently use on EC2):
+   - `SPRING_DATASOURCE_URL`
+   - `DB_USERNAME`
+   - `DB_PASSWORD`
+   - `JWT_SECRET`
+   - `MAIL_USERNAME`, `MAIL_PASSWORD`
+   - `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`
+3. Ensure the EB instance profile and network can reach your RDS endpoint.
+
+### GitHub Actions CD setup (EB)
+Set repository **secrets**:
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+- `AWS_REGION` (or set as variable)
+- `EB_APPLICATION_NAME` (or set as variable)
+- `EB_ENVIRONMENT_NAME` (or set as variable)
+
+Set repository **variables** (preferred):
+- `AWS_REGION`
+- `EB_APPLICATION_NAME`
+- `EB_ENVIRONMENT_NAME`
+
+### Deployment behavior
+- On push to `main`, workflow builds `app.jar`.
+- Workflow packages `app.jar` + `Procfile` into `deploy.zip`.
+- Workflow uploads bundle to Elastic Beanstalk storage S3 bucket.
+- Workflow creates a version label from commit SHA and updates the EB environment.
+- Workflow waits for environment update completion and prints environment health/status.
+
+### Rollback
+In AWS Console (Elastic Beanstalk), deploy a previous application version label to the same environment.
+
+### Legacy EC2 blue/green deploy (manual)
+The EC2 blue/green assets are still present for manual usage:
 - `deploy/nginx/xparience.conf`
 - `deploy/systemd/xparience@.service`
 - `deploy/ec2/bootstrap-ec2.sh`
 - `deploy/ec2/deploy-blue-green.sh`
-- `.github/workflows/cd-ec2.yml`
-
-### One-time EC2 bootstrap
-1. Launch Ubuntu EC2 and install Java 21, NGINX, and Maven.
-2. Clone this repo on EC2 (or copy the `deploy/` folder).
-3. Run bootstrap:
-	```bash
-	sudo bash deploy/ec2/bootstrap-ec2.sh
-	```
-4. Create production env file:
-	```bash
-	sudo cp deploy/ec2/common.env.example /etc/xparience/common.env
-	sudo nano /etc/xparience/common.env
-	```
-5. Ensure security groups:
-	- EC2 inbound: `80` (and `22` for admin)
-	- RDS inbound: `5432` from EC2 security group only
-
-### GitHub Actions CD setup
-Add these GitHub repository secrets:
-- `EC2_HOST` (public DNS/IP)
-- `EC2_USER` (SSH user)
-- `EC2_SSH_PRIVATE_KEY` (private key content)
-
-### Deployment behavior
-- CI/CD builds `app.jar` from `main` push.
-- Artifact is copied to EC2.
-- Deploy script starts the inactive slot (`blue`:`9091` or `green`:`9092`).
-- Health check runs on inactive slot (`/api-docs`).
-- NGINX upstream switches to healthy slot and reloads.
-- Old slot is stopped after switch.
-
-This provides near-zero downtime rolling cutover behind NGINX.
+- `.github/workflows/cd-ec2.yml` (manual dispatch only)
 
 ## API Overview
 
@@ -136,44 +143,3 @@ This provides near-zero downtime rolling cutover behind NGINX.
 | Settings      | /api/v1/settings        |
 | Subscription  | /api/v1/subscription    |
 | User Info     | /api/v1/user            |
-
-
-
-EC2 host details:
-- `EC2_HOST`: `13.135.83.217`
-- `EC2_USER`: `ubuntu`
-- `RDS endpoint`: `xparience-prod-db.cty404w2y67l.eu-west-2.rds.amazonaws.com`
-
-Copy/paste on EC2:
-```bash
-set -e
-sudo mkdir -p /opt/src
-cd /opt/src
-
-# replace with your real repo URL if needed
-sudo git clone https://github.com/DasoTD/xparience.git Xparience
-
-sudo chown -R ubuntu:ubuntu /opt/src/Xparience
-cd /opt/src/Xparience
-git checkout main
-git pull
-
-# bootstrap services/files on this host
-sudo bash deploy/ec2/bootstrap-ec2.sh
-
-# create production env with a strong JWT secret
-JWT_SECRET="$(openssl rand -base64 32)"
-sudo tee /etc/xparience/common.env >/dev/null <<EOF
-SPRING_DATASOURCE_URL=jdbc:postgresql://xparience-prod-db.cty404w2y67l.eu-west-2.rds.amazonaws.com:5432/xparience_db?sslmode=require
-DB_USERNAME=postgres
-DB_PASSWORD=REPLACE_WITH_REAL_DB_PASSWORD
-JWT_SECRET=${JWT_SECRET}
-MAIL_USERNAME=
-MAIL_PASSWORD=
-CLOUDINARY_CLOUD_NAME=
-CLOUDINARY_API_KEY=
-CLOUDINARY_API_SECRET=
-EOF
-
-sudo chmod 600 /etc/xparience/common.env
-```
