@@ -47,8 +47,49 @@ jobs:
 
       - name: Preflight SSH connectivity
         run: |
+          set -euo pipefail
           echo "Checking SSH connectivity to $EC2_HOST:$EC2_PORT ..."
-          nc -zvw8 "$EC2_HOST" "$EC2_PORT"
+
+          if command -v getent >/dev/null 2>&1; then
+            echo "DNS lookup:"
+            getent ahosts "$EC2_HOST" | head -n 5 || true
+          fi
+
+          attempts=5
+          wait_seconds=6
+          ok=0
+
+          for i in $(seq 1 "$attempts"); do
+            echo "Attempt $i/$attempts ..."
+
+            if command -v nc >/dev/null 2>&1; then
+              if nc -zvw8 "$EC2_HOST" "$EC2_PORT"; then
+                ok=1
+                break
+              fi
+            else
+              if timeout 8 bash -c "</dev/tcp/$EC2_HOST/$EC2_PORT" 2>/dev/null; then
+                ok=1
+                break
+              fi
+            fi
+
+            if [ "$i" -lt "$attempts" ]; then
+              echo "SSH port check failed, retrying in ${wait_seconds}s ..."
+              sleep "$wait_seconds"
+            fi
+          done
+
+          if [ "$ok" -ne 1 ]; then
+            echo "ERROR: Unable to reach $EC2_HOST:$EC2_PORT from GitHub runner."
+            echo "Common causes:"
+            echo "- EC2 security group does not allow inbound TCP/22 from GitHub Actions runner IPs."
+            echo "- Instance is stopped, unreachable, or has no valid public IP/DNS."
+            echo "- NACL/route table blocks inbound or return traffic."
+            exit 1
+          fi
+
+          echo "SSH connectivity preflight passed."
 
       - name: Upload deploy assets to EC2
         uses: appleboy/scp-action@v0.1.7
