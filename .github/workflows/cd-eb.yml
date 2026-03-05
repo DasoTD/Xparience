@@ -90,10 +90,20 @@ jobs:
 
           aws s3 cp deploy.zip "s3://${BUCKET_NAME}/${S3_KEY}"
 
-          aws elasticbeanstalk create-application-version \
+          existing_count="$(aws elasticbeanstalk describe-application-versions \
             --application-name "${EB_APPLICATION_NAME}" \
-            --version-label "${VERSION_LABEL}" \
-            --source-bundle S3Bucket="${BUCKET_NAME}",S3Key="${S3_KEY}"
+            --version-labels "${VERSION_LABEL}" \
+            --query 'length(ApplicationVersions)' \
+            --output text)"
+
+          if [ "${existing_count}" = "0" ]; then
+            aws elasticbeanstalk create-application-version \
+              --application-name "${EB_APPLICATION_NAME}" \
+              --version-label "${VERSION_LABEL}" \
+              --source-bundle S3Bucket="${BUCKET_NAME}",S3Key="${S3_KEY}"
+          else
+            echo "Application version ${VERSION_LABEL} already exists; reusing it."
+          fi
 
           wait_for_ready
 
