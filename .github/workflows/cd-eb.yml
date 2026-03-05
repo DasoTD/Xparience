@@ -110,12 +110,26 @@ jobs:
           update_ok=0
           for i in 1 2 3; do
             echo "Starting environment update (attempt ${i}/3) ..."
-            if aws elasticbeanstalk update-environment \
+            update_output="$(aws elasticbeanstalk update-environment \
               --environment-name "${EB_ENVIRONMENT_NAME}" \
-              --version-label "${VERSION_LABEL}"; then
+              --version-label "${VERSION_LABEL}" 2>&1)"
+            update_rc=$?
+
+            if [ "$update_rc" -eq 0 ]; then
               update_ok=1
               break
             fi
+
+            echo "${update_output}"
+
+            if echo "${update_output}" | grep -q "CREATE_FAILED"; then
+              echo "ERROR: Elastic Beanstalk environment stack is in CREATE_FAILED state; deployment cannot continue."
+              echo "Recovery options:"
+              echo "1) Rebuild environment: aws elasticbeanstalk rebuild-environment --environment-name \"${EB_ENVIRONMENT_NAME}\""
+              echo "2) Or create a new EB environment and update EB_ENVIRONMENT_NAME in GitHub variables."
+              exit 1
+            fi
+
             echo "Update request was rejected; waiting for environment to become Ready before retry ..."
             wait_for_ready
           done
