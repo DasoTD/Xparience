@@ -9,6 +9,22 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
+export DEBIAN_FRONTEND=noninteractive
+apt-get update -y
+apt-get install -y --no-install-recommends openjdk-21-jdk maven git nginx curl ca-certificates
+
+JAVA_BIN="$(command -v javac || true)"
+if [[ -z "$JAVA_BIN" ]]; then
+  echo "javac not found after installation"
+  exit 1
+fi
+
+JAVA_MAJOR="$(javac -version 2>&1 | awk '{print $2}' | cut -d. -f1)"
+if [[ "$JAVA_MAJOR" != "21" ]]; then
+  echo "Java 21 is required, but detected: $(javac -version 2>&1)"
+  exit 1
+fi
+
 id -u xparience >/dev/null 2>&1 || useradd --system --create-home --shell /bin/bash xparience
 
 mkdir -p /opt/xparience/blue /opt/xparience/green /opt/xparience/releases
