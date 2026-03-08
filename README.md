@@ -19,7 +19,7 @@ Copy `.env.example` to `.env` and fill in values, then export:
 ```bash
 export DB_USERNAME=postgres
 export DB_PASSWORD=yourpassword
-export SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5433/xparience_db
+export SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/xparience_db
 export JWT_SECRET=your-256-bit-base64-secret
 export MAIL_USERNAME=timileyindaso@gmail.com
 export MAIL_PASSWORD=
